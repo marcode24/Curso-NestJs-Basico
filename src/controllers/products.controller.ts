@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  // ParseIntPipe,
+  Post,
+  Put, Query, Res
+} from '@nestjs/common';
+import { ParseIntPipe } from 'src/common/parse-int.pipe';
 import { ProductsService } from 'src/services/products.service';
 // import { Response } from 'express';
 
@@ -15,7 +27,7 @@ export class ProductsController {
   // }
   @Get(':id')
   @HttpCode(HttpStatus.ACCEPTED) // when we make a request, we'll get this status (ACCEPTED - 202)
-  getProduct(@Param('id', ParseIntPipe) productId: number) {
+  getProduct(@Param('id', ParseIntPipe ) productId: number) { // using a pipe customized
     // return {
     //   message: `product with ID: ${params.id}`
     // };
