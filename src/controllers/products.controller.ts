@@ -1,8 +1,12 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query, Res } from '@nestjs/common';
+import { ProductsService } from 'src/services/products.service';
+// import { Response } from 'express';
 
 @Controller('products')
 export class ProductsController {
+
+  constructor(private productService: ProductsService) {}
+
   // -------- Usage of Params -------------
 
   // @Get('products/:id')
@@ -11,10 +15,11 @@ export class ProductsController {
   // }
   @Get(':id')
   @HttpCode(HttpStatus.ACCEPTED) // when we make a request, we'll get this status (ACCEPTED - 202)
-  getProduct(@Param() params: any) {
-    return {
-      message: `product with ID: ${params.id}`
-    };
+  getProduct(@Param('id', ParseIntPipe) productId: number) {
+    // return {
+    //   message: `product with ID: ${params.id}`
+    // };
+    return this.productService.findOne(productId);
   }
 
   // using express instead of "native" nest response
@@ -33,30 +38,34 @@ export class ProductsController {
       @Query('offset') offset = 0,
       @Query('brand') brand: string // waiting for params
     ) {
-    return `products: limit => ${limit}; offset => ${offset}; brand => ${brand}`;
+    return this.productService.findAll;
+    // return `products: limit => ${limit}; offset => ${offset}; brand => ${brand}`;
   }
 
   @Post('')
   create(@Body() payload: any) {
-    return {
-      message: 'accion de crear',
-      payload,
-    };
+    return this.productService.create(payload);
+    // return {
+    //   message: 'accion de crear',
+    //   payload,
+    // };
   }
 
   @Put(':id')
   update(@Param('id') id: number, @Body() payload: any) {
-    return {
-      id,
-      payload
-    }
+    return this.productService.update(Number(id), payload);
+    // return {
+    //   id,
+    //   payload
+    // }
   }
 
   @Delete(':id')
   delete(@Param('id') id: number) {
-    return {
-      id,
-    }
+    return this.productService.remove(id);
+    // return {
+    //   id,
+    // }
   }
 
 }
