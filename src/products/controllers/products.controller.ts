@@ -10,11 +10,13 @@ import {
   Post,
   Put, Query, Res
 } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ParseIntPipe } from 'src/common/parse-int.pipe';
 import { CreateProductDto, UpdateProductDto } from '../dto/products.dto';
 import { ProductsService } from '../services/products.service';
 // import { Response } from 'express';
 
+@ApiTags('Products')
 @Controller('products')
 export class ProductsController {
 
@@ -27,6 +29,7 @@ export class ProductsController {
   //   return `product with ID: ${idProduct}`;
   // }
   @Get(':id')
+  @ApiOperation({ summary: 'Get product by id' })
   @HttpCode(HttpStatus.ACCEPTED) // when we make a request, we'll get this status (ACCEPTED - 202)
   getProduct(@Param('id', ParseIntPipe ) productId: number) { // using a pipe customized
     // return {
