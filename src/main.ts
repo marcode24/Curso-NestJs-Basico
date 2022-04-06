@@ -12,6 +12,7 @@ async function bootstrap() {
     // alert to client which attributes are not defined
   }));
 
+  // config for documentation
   const config = new DocumentBuilder()
     .setTitle('API')
     .setDescription('Store - example')
@@ -20,7 +21,8 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
-
+  // config cors
+  app.enableCors();
   await app.listen(3000);
 }
 bootstrap();

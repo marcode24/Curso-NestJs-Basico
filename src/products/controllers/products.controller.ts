@@ -1,87 +1,56 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  HttpCode,
-  HttpStatus,
+  Query,
   Param,
-  // ParseIntPipe,
   Post,
-  Put, Query, Res
+  Body,
+  Put,
+  Delete,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ParseIntPipe } from 'src/common/parse-int.pipe';
-import { CreateProductDto, UpdateProductDto } from '../dto/products.dto';
-import { ProductsService } from '../services/products.service';
-// import { Response } from 'express';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { MongoIdPipe } from 'src/common/mongo-id.pipe';
+import { CreateProductDto, FilterProductsDto, UpdateProductDto } from '../dtos/products.dtos';
+import { ProductsService } from './../services/products.service';
 
-@ApiTags('Products')
+@ApiTags('products')
 @Controller('products')
 export class ProductsController {
+  constructor(private productsService: ProductsService) {}
 
-  constructor(private productService: ProductsService) {}
-
-  // -------- Usage of Params -------------
-
-  // @Get('products/:id')
-  // getProduct2(@Param('id') idProduct: string) {
-  //   return `product with ID: ${idProduct}`;
-  // }
-  @Get(':id')
-  @ApiOperation({ summary: 'Get product by id' })
-  @HttpCode(HttpStatus.ACCEPTED) // when we make a request, we'll get this status (ACCEPTED - 202)
-  getProduct(@Param('id', ParseIntPipe ) productId: number) { // using a pipe customized
-    // return {
-    //   message: `product with ID: ${params.id}`
-    // };
-    return this.productService.findOne(productId);
-  }
-
-  // using express instead of "native" nest response
-  /* getProduct(@Res() response: Response, @Param() params: any) {
-    response.status(202).send({
-      message: `product with ID: ${params.id}`
-    })
-  } */
-
-
-  // -------- Usage of Query Params -------------
-
-  @Get('')
+  @Get()
+  @ApiOperation({ summary: 'List of products' })
   getProducts(
-      @Query('limit') limit = 100, // params by default
-      @Query('offset') offset = 0,
-      @Query('brand') brand: string // waiting for params
-    ) {
-    return this.productService.findAll;
-    // return `products: limit => ${limit}; offset => ${offset}; brand => ${brand}`;
+    @Query() params: FilterProductsDto,
+  ) {
+    return this.productsService.findAll(params);
   }
 
-  @Post('')
+  @Get('filter')
+  getProductFilter() {
+    return `yo soy un filter`;
+  }
+
+  @Get(':productId')
+  @HttpCode(HttpStatus.ACCEPTED)
+  getOne(@Param('productId', MongoIdPipe) productId: string) {
+    return this.productsService.findOne(productId);
+  }
+
+  @Post()
   create(@Body() payload: CreateProductDto) {
-    return this.productService.create(payload);
-    // return {
-    //   message: 'accion de crear',
-    //   payload,
-    // };
+    return this.productsService.create(payload);
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() payload: UpdateProductDto) {
-    return this.productService.update(Number(id), payload);
-    // return {
-    //   id,
-    //   payload
-    // }
+  update(@Param('id', MongoIdPipe) id: string, @Body() payload: UpdateProductDto) {
+    return this.productsService.update(id, payload);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number) {
-    return this.productService.remove(id);
-    // return {
-    //   id,
-    // }
+  delete(@Param('id', MongoIdPipe) id: string) {
+    return this.productsService.remove(id);
   }
-
 }

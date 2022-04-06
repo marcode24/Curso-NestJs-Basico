@@ -9,10 +9,12 @@ import { environmets } from './environment';
 
 import { ProductsModule } from './products/products.module';
 import { UsersModule } from './users/users.module';
-
+import { AuthModule } from './auth/auth.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
+    DatabaseModule,
     ProductsModule,
     UsersModule,
     // config .env files
@@ -21,11 +23,12 @@ import { UsersModule } from './users/users.module';
       load: [ config ],
       isGlobal: true,
       validationSchema: Joi.object({
-        API_KEY: Joi.number().required(),
+        API_KEY: Joi.string().required(),
         DATABASE_NAME: Joi.string().required(),
         DATABASE_PORT: Joi.number().required(),
       })
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

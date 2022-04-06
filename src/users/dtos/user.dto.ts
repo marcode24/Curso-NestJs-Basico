@@ -4,7 +4,7 @@ import { PartialType, ApiProperty } from '@nestjs/swagger';
 export class CreateUserDto {
   @IsString()
   @IsEmail()
-  @ApiProperty({ description: 'Email of user'})
+  @ApiProperty({ description: 'the email of user' })
   readonly email: string;
 
   @IsString()
